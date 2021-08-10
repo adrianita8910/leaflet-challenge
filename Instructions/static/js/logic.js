@@ -3,6 +3,7 @@ var url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.ge
 
 // Grab the data with d3
 d3.json(url).then(function (data) {
+    // console.log(data.features);
     createFeatures(data.features);
 });
 
@@ -22,33 +23,39 @@ function chooseColor(mag) {
 }
 
 function createFeatures(earthquakeData) {
-    function onEachFeatures(feature, layer) {
+    //console.log(earthquakeData);
+    function onEachFeature(feature, layer) {
+        //console.log(feature.properties.mag);
+        //console.log(feature.properties.place);
         layer.bindPopup("Magnitude:" + feature.properties.mag + "<br>Location:" + feature.properties.place + "<br>Date:" + new Date(feature.properties.time))
     }
 
-    var earthquakes = L.geoJSON(earthquakeData, {
+    var earthquakes = new L.LayerGroup();
+    L.geoJSON(earthquakeData, {
+        //console.log(earthquakeData);
         pointtoLayer: function(feature, latlng) {
             return L.circleMarker(latlng);
         },
 
         style: function (feature) {
-            console.log(feature.properties.mag)
+            console.log(feature.properties.mag);
             return {
                 fillColor: chooseColor(feature.properties.mag),
                 fillOpacity: 1,
                 weight: 1.5,
                 radius: markerSize(feature.properties.mag),
                 stroke: false
-            }
+            };
         },
 
-        onEachFeatures: onEachFeatures
-    });
+        onEachFeature: onEachFeature
+    }).addTo(earthquakes);
 
-    createImageBitmap(earthquakes);
+    createMap(earthquakes);
 }
  // Adding tile layer to the map
 function createMap(earthquakes) {
+    console.log(earthquakes);
     var satellite = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
         attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
         tileSize: 512,
@@ -85,10 +92,10 @@ function createMap(earthquakes) {
     };
 
     // Creating map object
-    var myMap = L.map("map", {
-        center: [40.7, -73.95],
-        zoom: 5,
-        layers: [satellite, earthquakes]
+    var myMap = L.map("mapid", {
+        center: [39.1066, -94.6763],
+        zoom: 1
+        // layers: [satellite, earthquakes]
     });
 
     // Create a control for our layers, add our overlay layers to it
@@ -97,20 +104,20 @@ function createMap(earthquakes) {
     }).addTo(myMap);
 
     // Create a legend to display information about our map
-    var legend = L.control({ position: "bottomright"});
-    console.log(L);
-    console.log(legend);
-    legend.onAdd = function () {
-        var div = L.DomUtil.create("div", "info legend");
-        var mag = [0, 1, 2, 3, 4, 5];
+    // var legend = L.control({ position: "bottomright"});
+    // console.log(L);
+    // console.log(legend);
+    // legend.onAdd = function () {
+    //     var div = L.DomUtil.create("div", "info legend");
+    //     var mag = [0, 1, 2, 3, 4, 5];
 
-        for(var i = 0; i < mag.length; i++) {
-            div.inneHTML +=
-                '<i style="background:' + chooseColor(mag[i] + 1) + '"></i>' +
-                mag[i] + (mag[i + 1] ? '&ndash;' + mag[i + 1] + '<br>': '+');
-        }
+    //     for(var i = 0; i < mag.length; i++) {
+    //         div.inneHTML +=
+    //             '<i style="background:' + chooseColor(mag[i] + 1) + '"></i>' +
+    //             mag[i] + (mag[i + 1] ? '&ndash;' + mag[i + 1] + '<br>': '+');
+    //     }
 
-        return div;
-    };
-    legend.addTo(myMap);
+    //     return div;
+    // };
+    // legend.addTo(myMap);
 }
