@@ -103,21 +103,21 @@ function createMap(earthquakes) {
         collapsed: false
     }).addTo(myMap);
 
-    // Create a legend to display information about our map
-    // var legend = L.control({ position: "bottomright"});
-    // console.log(L);
-    // console.log(legend);
-    // legend.onAdd = function () {
-    //     var div = L.DomUtil.create("div", "info legend");
-    //     var mag = [0, 1, 2, 3, 4, 5];
+    //Create a legend to display information about our map
+    var legend = L.control({ position: "bottomright"});
+    console.log(L);
+    console.log(legend);
+    legend.onAdd = function () {
+        var div = L.DomUtil.create("div", "info legend");
+        var mag = [0, 1, 2, 3, 4, 5];
 
-    //     for(var i = 0; i < mag.length; i++) {
-    //         div.inneHTML +=
-    //             '<i style="background:' + chooseColor(mag[i] + 1) + '"></i>' +
-    //             mag[i] + (mag[i + 1] ? '&ndash;' + mag[i + 1] + '<br>': '+');
-    //     }
+        for(var i = 0; i < mag.length; i++) {
+            div.inneHTML +=
+                '<i style="background:' + chooseColor(mag[i] + 1) + '"></i>' +
+                mag[i] + (mag[i + 1] ? '&ndash;' + mag[i + 1] + '<br>': '+');
+        }
 
-    //     return div;
-    // };
-    // legend.addTo(myMap);
+        return div;
+    };
+    legend.addTo(myMap);
 }
